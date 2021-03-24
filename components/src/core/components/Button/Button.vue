@@ -1,5 +1,5 @@
 <template>
-  <button :class="classes" :style="style">
+  <button type="button" :class="classes" :style="style">
     <slot name="icon">
       <oxd-icon v-if="iconName" :name="iconName" class="oxd-button-icon" />
     </slot>
