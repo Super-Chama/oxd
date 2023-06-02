@@ -10,6 +10,7 @@ export default defineConfig((conf) => {
   const mode = conf.mode === 'library' ? 'lib' : 'dev';
 
   const baseConfig: UserConfig = {
+    base: '/oxd/',
     plugins: [vue()],
     resolve: {
       alias: {
