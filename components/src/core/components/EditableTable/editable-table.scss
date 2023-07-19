@@ -1,0 +1,35 @@
+@import '../../../styles';
+@import 'variables';
+
+.oxd-edit-table {
+  div {
+    box-sizing: border-box;
+  }
+
+  display: flex;
+  flex-direction: column;
+  color: $oxd-edit-table-font-color;
+  font-size: $oxd-edit-table-font-size;
+  font-family: $oxd-edit-table-font-family;
+
+  &-row,
+  &-thead {
+    display: grid;
+  }
+  &-td {
+    min-height: 1.2rem;
+  }
+  &-body {
+    display: flex;
+    flex-direction: column;
+  }
+  &-thead {
+    border-bottom: $oxd-edit-table-header-border;
+  }
+  &-row {
+    border-bottom: $oxd-edit-table-row-border;
+    &:last-of-type {
+      border-bottom: unset;
+    }
+  }
+}
