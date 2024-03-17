@@ -244,3 +244,12 @@ input.mce-textbox:focus {
   font-weight: 600;
   color: $oxd-interface-gray-darken-1-color;
 }
+
+.oxd-tinymce-input--disabled .mce-edit-area {
+  border-width: 0 !important;
+}
+
+.oxd-tinymce-input--disabled .mce-panel:focus-within {
+  box-shadow: none !important;
+  border: 1px solid $oxd-interface-gray-lighten-2-color !important;
+}

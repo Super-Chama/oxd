@@ -197,7 +197,7 @@ export default defineComponent({
           icon: 'mce-ico mce-i-settings',
           tooltip: 'Toggle Toolbar',
           onclick() {
-            seonderyTooltbar.value.classList.toggle('d-none');
+            seonderyTooltbar.value?.classList.toggle('d-none');
           },
         });
       },
@@ -205,7 +205,7 @@ export default defineComponent({
         seonderyTooltbar.value = document.querySelector(
           `.mce-toolbar.mce-stack-layout-item.mce-last`,
         );
-        seonderyTooltbar.value.classList.add('d-none');
+        seonderyTooltbar.value?.classList.add('d-none');
         fileInput.value = document.querySelector(
           `#tinymce-input-${tinymceId.value}`,
         );
@@ -214,10 +214,7 @@ export default defineComponent({
 
     const processedSettings = computed(() => {
       for (const key in props.configurations) {
-        const value = props.configurations[key];
-        if (value) {
-          initialObject[key] = value;
-        }
+        initialObject[key] = props.configurations[key];
       }
       return initialObject;
     });
