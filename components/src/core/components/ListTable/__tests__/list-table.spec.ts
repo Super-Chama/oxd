@@ -8,13 +8,13 @@ const DUMMY_DATA = {
     {name: 'col2', title: 'Column 2', style: {flex: 5}},
   ],
   items: [
-    {col1: 'Data 1', col2: 'Data 2'},
-    {col1: 'Data 2', col2: 'Data 2'},
+    {id: 'a1', col1: 'Data 1', col2: 'Data 2'},
+    {id: 'a2', col1: 'Data 2', col2: 'Data 2'},
+    {id: 'a3', col1: 'Data 3', col2: 'Data 3'},
   ],
   checkedItems: [2, 0],
+  checkedItemIds: ['a3', 'a1'],
 };
-
-jest.mock('../../../../utils/emitter');
 
 describe('ListTable > ListTable.vue', () => {
   it('renders OXD ListTable > ListTable', () => {
@@ -149,5 +149,158 @@ describe('ListTable > ListTable.vue', () => {
     const checkbox = tableHeader.find('input[type="checkbox"]');
 
     expect(checkbox.attributes('disabled')).toEqual('');
+  });
+
+  it('should emit event when single row is selected', async () => {
+    const wrapper = mount(ListTable, {
+      props: {
+        selectable: true,
+        items: DUMMY_DATA.items,
+        headers: DUMMY_DATA.headers,
+        selected: [],
+      },
+    });
+
+    const checkboxes = wrapper.findAll(
+      '.oxd-table-body .checkbox-cell input[type="checkbox"]',
+    );
+    await checkboxes[0].setValue(true);
+    await checkboxes[0].trigger('change');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected')).toBeTruthy();
+    expect(wrapper.emitted('update:selected')![0]).toEqual([[0]]);
+  });
+
+  it('should emit event when multiple rows are selected', async () => {
+    const wrapper = mount(ListTable, {
+      props: {
+        selectable: true,
+        items: DUMMY_DATA.items,
+        headers: DUMMY_DATA.headers,
+        selected: [0],
+      },
+    });
+
+    const checkboxes = wrapper.findAll(
+      '.oxd-table-body .checkbox-cell input[type="checkbox"]',
+    );
+    await checkboxes[2].setValue(true);
+    await checkboxes[2].trigger('change');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected')).toBeTruthy();
+    expect(wrapper.emitted('update:selected')![0]).toEqual([[0, 2]]);
+  });
+
+  it('should emit event when row is unselected', async () => {
+    const wrapper = mount(ListTable, {
+      props: {
+        selectable: true,
+        items: DUMMY_DATA.items,
+        headers: DUMMY_DATA.headers,
+        selected: [0, 2],
+      },
+    });
+
+    const checkboxes = wrapper.findAll(
+      '.oxd-table-body .checkbox-cell input[type="checkbox"]',
+    );
+    await checkboxes[0].setValue(false);
+    await checkboxes[0].trigger('change');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected')).toBeTruthy();
+    expect(wrapper.emitted('update:selected')![0]).toEqual([[2]]);
+  });
+
+  it('should emit event when select all is clicked with index selection mode', async () => {
+    const wrapper = mount(ListTable, {
+      props: {
+        selectable: true,
+        items: DUMMY_DATA.items,
+        headers: DUMMY_DATA.headers,
+        selected: [],
+        selectionMode: 'index',
+      },
+    });
+
+    const selectAllCheckbox = wrapper.find(
+      '.oxd-table-header .checkbox-cell input[type="checkbox"]',
+    );
+    await selectAllCheckbox.setValue(true);
+    await selectAllCheckbox.trigger('change');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected')).toBeTruthy();
+    expect(wrapper.emitted('update:selected')![0]).toEqual([[0]]);
+  });
+
+  it('should emit event when select all is clicked with property selection mode', async () => {
+    const wrapper = mount(ListTable, {
+      props: {
+        selectable: true,
+        items: DUMMY_DATA.items,
+        headers: DUMMY_DATA.headers,
+        selected: [],
+        selectionMode: 'property',
+        selectionProperty: 'id',
+      },
+    });
+
+    const selectAllCheckbox = wrapper.find(
+      '.oxd-table-header .checkbox-cell input[type="checkbox"]',
+    );
+    await selectAllCheckbox.setValue(true);
+    await selectAllCheckbox.trigger('change');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected')).toBeTruthy();
+    expect(wrapper.emitted('update:selected')![0]).toEqual([['a1']]);
+  });
+
+  it('should emit event when unselect all is clicked with index selection mode', async () => {
+    const wrapper = mount(ListTable, {
+      props: {
+        selectable: true,
+        items: DUMMY_DATA.items,
+        headers: DUMMY_DATA.headers,
+        selected: [0, 1, 2],
+        selectionMode: 'index',
+      },
+    });
+
+    const selectAllCheckbox = wrapper.find(
+      '.oxd-table-header .checkbox-cell input[type="checkbox"]',
+    );
+    await selectAllCheckbox.setValue(false);
+    await selectAllCheckbox.trigger('change');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected')).toBeTruthy();
+    expect(wrapper.emitted('update:selected')![0]).toEqual([[1, 2]]);
+  });
+
+  it('should emit event when unselect all is clicked with property selection mode', async () => {
+    const wrapper = mount(ListTable, {
+      props: {
+        selectable: true,
+        items: DUMMY_DATA.items,
+        headers: DUMMY_DATA.headers,
+        selected: ['a1', 'a2', 'a3'],
+        selectionMode: 'property',
+        selectionProperty: 'id',
+      },
+    });
+
+    const selectAllCheckbox = wrapper.find(
+      '.oxd-table-header .checkbox-cell input[type="checkbox"]',
+    );
+    await selectAllCheckbox.setValue(false);
+    await selectAllCheckbox.trigger('change');
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.emitted('update:selected')).toBeTruthy();
+    expect(wrapper.emitted('update:selected')![0]).toEqual([['a2', 'a3']]);
   });
 });
